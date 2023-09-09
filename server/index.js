@@ -1,11 +1,3 @@
-// export const getUser = async (req,res) => {
-//     try{
-        
-//     }catch(err){
-//         res.status().json({message: err.message});
-//     }
-// }
-
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";

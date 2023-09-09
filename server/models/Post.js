@@ -1,5 +1,29 @@
 import mongoose from "mongoose";
 
+const commentSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    //ref: "User", // Reference to the User model (if you have one)
+    required: true,
+  },
+  commenterFirstName: {
+    type: String,
+    required: true,
+  },
+  commenterLastName: {
+    type: String,
+    required: true,
+  },
+  commenterPicturePath:{
+    type: String,
+    required: true,
+  },
+  commentText: {
+    type: String,
+    required: true,
+  },
+});
+
 const postSchema = mongoose.Schema(
   {
     userId: {
@@ -22,10 +46,7 @@ const postSchema = mongoose.Schema(
       type: Map,
       of: Boolean,
     },
-    comments: {
-      type: Array,
-      default: [],
-    },
+    comments: [commentSchema],
   },
   { timestamps: true }
 );
