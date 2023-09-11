@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostWidget from "./PostWidget";
+import { useNavigate } from "react-router-dom";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
 
@@ -14,6 +16,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
+    console.log(data);
     dispatch(setPosts({ posts: data }));
   };
 
@@ -28,6 +31,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     const data = await response.json();
     dispatch(setPosts({ posts: data }));
   };
+
 
   useEffect(() => {
     isProfile ? getUserPosts() : getPosts();

@@ -24,6 +24,9 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
+import { storage } from "utils/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { v4 as uuid } from "uuid";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
@@ -38,23 +41,57 @@ const MyPostWidget = ({ picturePath }) => {
   const medium = palette.neutral.medium;
 
   const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    formData.append("description", post);
     if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
+      const storageRef = ref(storage, uuid());
+      const uploadTask = uploadBytesResumable(storageRef, image);
+
+      uploadTask
+        .then((snapshot) => {
+          // Get the download URL after the upload is complete
+          return getDownloadURL(snapshot.ref);
+        })
+        .then(async (downloadURL) => {
+          const formData = {
+            userId: _id,
+            description: post,
+            picturePath: downloadURL,
+          };
+          console.log(formData);
+          const response = await fetch(`http://localhost:3001/posts`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
+          });
+
+          const posts = await response.json();
+          dispatch(setPosts({ posts }));
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      const formData = {
+        userId: _id,
+        description: post,
+      };
+      console.log(formData);
+      const response = await fetch(`http://localhost:3001/posts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+      const posts = await response.json();
+      dispatch(setPosts({ posts }));
     }
 
-    const response = await fetch(`http://localhost:3001/posts`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-
-    const posts = await response.json();
-    dispatch(setPosts({ posts }));
     setImage(null);
+    setIsImage(false);
     setPost("");
   };
 
@@ -134,11 +171,6 @@ const MyPostWidget = ({ picturePath }) => {
 
         {isNonMobileScreens ? (
           <>
-            {/* <FlexBetween gap="0.25rem">
-              <GifBoxOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Clip</Typography>
-            </FlexBetween> */}
-
             <FlexBetween gap="0.25rem">
               <AttachFileOutlined sx={{ color: mediumMain }} />
               <Typography color={mediumMain}>Attachment</Typography>

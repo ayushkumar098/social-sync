@@ -16,7 +16,6 @@ import {
   DarkMode,
   LightMode,
   Notifications,
-  Help,
   Menu,
   Close,
 } from "@mui/icons-material";
@@ -86,7 +85,6 @@ const NavbarPage = () => {
             </IconButton>
             <Message sx={{ fontSize: "25px" }} />
             <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} />
             <FormControl sx={{ fontSize: "25px" }}>
               <Select
                 value={fullName}
@@ -163,7 +161,6 @@ const NavbarPage = () => {
               </IconButton>
               <Message sx={{ fontSize: "25px" }} />
               <Notifications sx={{ fontSize: "25px" }} />
-              <Help sx={{ fontSize: "25px" }} />
               <FormControl sx={{ fontSize: "25px" }}>
                 <Select
                   value={fullName}

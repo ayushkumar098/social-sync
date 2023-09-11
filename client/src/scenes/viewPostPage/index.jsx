@@ -52,18 +52,6 @@ const ViewPostPage = () => {
   const main = palette.neutral.main;
   const primary = palette.primary.main;
 
-  // useEffect(async () => {
-
-  //   const response = await fetch(`http://localhost:3001/posts/${_id}/like`, {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ commentUserIds: comments }),
-  //   });
-  // }, []);
-
   const patchLike = async () => {
     const response = await fetch(`http://localhost:3001/posts/${_id}/like`, {
       method: "PATCH",
@@ -123,7 +111,7 @@ const ViewPostPage = () => {
             height="auto"
             alt="post"
             style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
-            src={`http://localhost:3001/assets/${picturePath}`}
+            src={picturePath}
           />
         )}
 
@@ -171,7 +159,7 @@ const ViewPostPage = () => {
             >
               <Box display="flex" alignItems="center" justifyContent="center" marginBottom="0.4rem" flex="1">
                 <img
-                  src={`http://localhost:3001/assets/${comment.commenterPicturePath}`}
+                  src={comment.commenterPicturePath}
                   style={{
                     borderRadius: "50%",
                     width: "2.5rem",

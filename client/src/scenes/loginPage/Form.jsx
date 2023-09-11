@@ -16,6 +16,10 @@ import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
+import { storage } from "utils/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { v4 as uuid } from "uuid";
+
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
@@ -56,22 +60,46 @@ const Form = () => {
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
-    const formData = new FormData();
-    for (let value in values) {
-      formData.append(value, values[value]);
-    }
-    formData.append("picturePath", values.picture.name);
-    const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
-      { method: "POST", body: formData }
-    );
-    const savedUser = await savedUserResponse.json();
-    onSubmitProps.resetForm();
+    const storageRef = ref(storage, uuid());
+    const uploadTask = uploadBytesResumable(storageRef, values.picture);
 
-    if (savedUser) {
-      setPageType("login");
-    }
+    uploadTask
+      .then((snapshot) => {
+        // Get the download URL after the upload is complete
+        return getDownloadURL(snapshot.ref);
+      })
+      .then(async (downloadURL) => {
+        const formData = {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+          password: values.password,
+          picturePath: downloadURL,
+          friends: [],
+          location: values.location,
+          occupation: values.occupation,
+        };
+        console.log(formData);
+        const savedUserResponse = await fetch(
+          `http://localhost:3001/auth/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+        const savedUser = await savedUserResponse.json();
+
+        if (savedUser) {
+          setPageType("login");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    onSubmitProps.resetForm();
   };
 
   const login = async (values, onSubmitProps) => {
