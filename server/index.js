@@ -47,6 +47,9 @@ const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
 app.post("/auth/register" , register);
+app.get("/check", (req,res)=>{
+  res.status(200).json({check: "hello world"});
+});
 
 /* ROUTES */
 app.use("/auth", authRoutes);
@@ -61,7 +64,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+    app.listen(PORT, () => console.log(`MongoDB server started on port: ${PORT}`));
 
     // User.insertMany(users);
     // Post.insertMany(posts);
