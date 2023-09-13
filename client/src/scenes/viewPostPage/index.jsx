@@ -42,7 +42,7 @@ const ViewPostPage = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   //const loggedInUserId = useSelector((state) => state.user._id);
-  const loggedInUser = useSelector((state)=>state.user);
+  const loggedInUser = useSelector((state) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width: 700px)");
   const isLiked = Boolean(likes[loggedInUser._id]);
   const likeCount = Object.keys(likes).length;
@@ -53,14 +53,17 @@ const ViewPostPage = () => {
   const primary = palette.primary.main;
 
   const patchLike = async () => {
-    const response = await fetch(`http://localhost:3001/posts/${_id}/like`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUser._id }),
-    });
+    const response = await fetch(
+      `https://social-sync.onrender.com/posts/${_id}/like`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUser._id }),
+      }
+    );
     const updatedPost = await response.json();
     dispatch(setViewPostUser({ viewPostUser: updatedPost }));
   };
@@ -75,14 +78,17 @@ const ViewPostPage = () => {
       lastName: loggedInUser.lastName,
       picturePath: loggedInUser.picturePath,
     };
-    const response = await fetch(`http://localhost:3001/posts/${_id}/comment`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(commentBody),
-    });
+    const response = await fetch(
+      `https://social-sync.onrender.com/posts/${_id}/comment`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(commentBody),
+      }
+    );
     const updatedPost = await response.json();
     setComment("");
     dispatch(setViewPostUser({ viewPostUser: updatedPost }));
@@ -102,7 +108,11 @@ const ViewPostPage = () => {
           subtitle={location}
           userPicturePath={userPicturePath}
         />
-        <Typography variant="h4" color={main} sx={{ mt: "1rem", cursor: "pointer" }}>
+        <Typography
+          variant="h4"
+          color={main}
+          sx={{ mt: "1rem", cursor: "pointer" }}
+        >
           {description}
         </Typography>
         {picturePath && (
@@ -157,7 +167,13 @@ const ViewPostPage = () => {
               margin=".6rem 0"
               width="100%"
             >
-              <Box display="flex" alignItems="center" justifyContent="center" marginBottom="0.4rem" flex="1">
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                marginBottom="0.4rem"
+                flex="1"
+              >
                 <img
                   src={comment.commenterPicturePath}
                   style={{
@@ -172,7 +188,9 @@ const ViewPostPage = () => {
                   variant="h6"
                   sx={{ color: main }}
                 >{`${comment.commenterFirstName} ${comment.commenterLastName}`}</Typography>
-                <Typography variant="h5" sx={{overflowWrap: "break-word"}}>{comment.commentText}</Typography>
+                <Typography variant="h5" sx={{ overflowWrap: "break-word" }}>
+                  {comment.commentText}
+                </Typography>
               </Box>
             </Box>
           ))}

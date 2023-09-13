@@ -37,21 +37,24 @@ const PostWidget = ({
   const primary = palette.primary.main;
 
   const patchLike = async () => {
-    const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUserId }),
-    });
+    const response = await fetch(
+      `https://social-sync.onrender.com/posts/${postId}/like`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId }),
+      }
+    );
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
   };
 
   const getPostData = async () => {
     const response = await fetch(
-      `http://localhost:3001/posts/${postUserId}/${postId}`,
+      `https://social-sync.onrender.com/posts/${postUserId}/${postId}`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
@@ -62,7 +65,6 @@ const PostWidget = ({
 
     navigate(`/posts/${postUserId}/${postId}`);
   };
-
 
   return (
     <WidgetWrapper m="2rem 0">

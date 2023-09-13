@@ -79,9 +79,8 @@ const Form = () => {
           location: values.location,
           occupation: values.occupation,
         };
-        console.log(formData);
         const savedUserResponse = await fetch(
-          `http://localhost:3001/auth/register`,
+          `https://social-sync.onrender.com/auth/register`,
           {
             method: "POST",
             headers: {
@@ -103,13 +102,16 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
+    const loggedInResponse = await fetch(
+      "https://social-sync.onrender.com/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      }
+    );
     const loggedIn = await loggedInResponse.json();
-    onSubmitProps.resetForm();
+
     if (loggedIn) {
       dispatch(
         setLogin({
@@ -119,6 +121,7 @@ const Form = () => {
       );
       navigate("/home");
     }
+    onSubmitProps.resetForm();
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {

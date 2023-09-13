@@ -57,14 +57,17 @@ const MyPostWidget = ({ picturePath }) => {
             picturePath: downloadURL,
           };
           console.log(formData);
-          const response = await fetch(`http://localhost:3001/posts`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(formData),
-          });
+          const response = await fetch(
+            `https://social-sync.onrender.com/posts`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(formData),
+            }
+          );
 
           const posts = await response.json();
           dispatch(setPosts({ posts }));
@@ -78,7 +81,7 @@ const MyPostWidget = ({ picturePath }) => {
         description: post,
       };
       console.log(formData);
-      const response = await fetch(`http://localhost:3001/posts`, {
+      const response = await fetch(`https://social-sync.onrender.com/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

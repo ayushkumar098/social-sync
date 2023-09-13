@@ -9,7 +9,7 @@ const UserImage = ({ image, size = "60px" }) => {
         height={size}
         alt="user"
         src={image}
-        // src={`http://localhost:3001/assets/${image}`}
+        // src={`https://social-sync.onrender.com/assets/${image}`}
       />
     </Box>
   );
