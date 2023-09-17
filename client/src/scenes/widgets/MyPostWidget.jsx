@@ -23,10 +23,11 @@ import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "state";
+import { setPosts } from "state/index";
 import { storage } from "utils/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuid } from "uuid";
+import { host } from "utils/APIRoutes";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
@@ -57,17 +58,14 @@ const MyPostWidget = ({ picturePath }) => {
             picturePath: downloadURL,
           };
           console.log(formData);
-          const response = await fetch(
-            `https://social-sync.onrender.com/posts`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify(formData),
-            }
-          );
+          const response = await fetch(`${host}/posts`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
+          });
 
           const posts = await response.json();
           dispatch(setPosts({ posts }));
@@ -81,7 +79,7 @@ const MyPostWidget = ({ picturePath }) => {
         description: post,
       };
       console.log(formData);
-      const response = await fetch(`https://social-sync.onrender.com/posts`, {
+      const response = await fetch(`${host}/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

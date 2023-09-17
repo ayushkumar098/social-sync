@@ -17,8 +17,9 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setViewPostUser } from "state";
+import { setViewPostUser } from "state/index";
 import Navbar from "scenes/navbar";
+import { host } from "utils/APIRoutes";
 
 const ViewPostPage = () => {
   const postData = useSelector((state) => state.viewPostUser);
@@ -53,17 +54,14 @@ const ViewPostPage = () => {
   const primary = palette.primary.main;
 
   const patchLike = async () => {
-    const response = await fetch(
-      `https://social-sync.onrender.com/posts/${_id}/like`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: loggedInUser._id }),
-      }
-    );
+    const response = await fetch(`${host}/posts/${_id}/like`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: loggedInUser._id }),
+    });
     const updatedPost = await response.json();
     dispatch(setViewPostUser({ viewPostUser: updatedPost }));
   };
@@ -78,17 +76,14 @@ const ViewPostPage = () => {
       lastName: loggedInUser.lastName,
       picturePath: loggedInUser.picturePath,
     };
-    const response = await fetch(
-      `https://social-sync.onrender.com/posts/${_id}/comment`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(commentBody),
-      }
-    );
+    const response = await fetch(`${host}/posts/${_id}/comment`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(commentBody),
+    });
     const updatedPost = await response.json();
     setComment("");
     dispatch(setViewPostUser({ viewPostUser: updatedPost }));

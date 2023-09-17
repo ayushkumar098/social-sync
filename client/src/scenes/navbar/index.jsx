@@ -20,7 +20,7 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state";
+import { setMode, setLogout } from "state/index";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 
@@ -42,7 +42,7 @@ const NavbarPage = () => {
 
   return (
     <>
-      <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+      <FlexBetween padding="1rem 6%" backgroundColor={alt} maxHeight="5rem">
         <FlexBetween gap="1.75rem">
           <Typography
             fontWeight="bold"

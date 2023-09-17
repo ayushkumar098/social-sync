@@ -11,7 +11,8 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setPost, setViewPostUser } from "state";
+import { setPost, setViewPostUser } from "state/index";
+import { host } from "utils/APIRoutes";
 
 const PostWidget = ({
   postId,
@@ -37,24 +38,21 @@ const PostWidget = ({
   const primary = palette.primary.main;
 
   const patchLike = async () => {
-    const response = await fetch(
-      `https://social-sync.onrender.com/posts/${postId}/like`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: loggedInUserId }),
-      }
-    );
+    const response = await fetch(`${host}/posts/${postId}/like`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: loggedInUserId }),
+    });
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
   };
 
   const getPostData = async () => {
     const response = await fetch(
-      `https://social-sync.onrender.com/posts/${postUserId}/${postId}`,
+      `${host}/posts/${postUserId}/${postId}`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },

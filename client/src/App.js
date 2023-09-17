@@ -8,11 +8,17 @@ import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme.js";
+import ChatPage from "scenes/chatPage/index.jsx";
+// import socketIO from "socket.io-client";
+
+
+// const socket = socketIO.connect("");
 
 function App() {
   const mode = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const isAuth = Boolean(useSelector((state) => state.token));
+  console.log("Auth: "+isAuth);
 
   return (
     <div className="app">
@@ -29,7 +35,14 @@ function App() {
               path="/profile/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
             />
-            <Route path="/posts/:userId/:postId" element={isAuth ? <ViewPostPage /> : <Navigate to="/" />} />
+            <Route
+              path="/posts/:userId/:postId"
+              element={isAuth ? <ViewPostPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/message"
+              element={isAuth ? <ChatPage /> : <Navigate to="/" />}
+            />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

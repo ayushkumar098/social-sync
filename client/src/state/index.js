@@ -6,6 +6,8 @@ const INITIAL_STATE = {
   token: null,
   posts: [],
   viewPostUser: null,
+  userChatList: [],
+  currentUser: null,
 };
 
 export const authSlice = createSlice({
@@ -16,6 +18,7 @@ export const authSlice = createSlice({
       state.mode = state.mode === "light" ? "dark" : "light";
     },
     setLogin: (state, action) => {
+      console.log("dispatch");
       state.user = action.payload.user;
       state.token = action.payload.token;
     },
@@ -46,10 +49,25 @@ export const authSlice = createSlice({
     setViewPostUser: (state, action) => {
       state.viewPostUser = action.payload.viewPostUser;
     },
+    setCurrentUser: (state, action) => {
+      state.currentUser = action.payload.currentUser;
+    },
+    setUserChatList: (state, action) => {
+      state.userChatList = action.payload.userChatList;
+    },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, setViewPostUser } =
-  authSlice.actions;
+export const {
+  setMode,
+  setLogin,
+  setLogout,
+  setFriends,
+  setPosts,
+  setPost,
+  setViewPostUser,
+  setCurrentUser,
+  setUserChatList,
+} = authSlice.actions;
 
 export default authSlice.reducer;

@@ -12,13 +12,14 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogin } from "state";
+import { setLogin } from "state/index";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
 import { storage } from "utils/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuid } from "uuid";
+import { loginRoute, registerRoute } from "utils/APIRoutes";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -80,7 +81,7 @@ const Form = () => {
           occupation: values.occupation,
         };
         const savedUserResponse = await fetch(
-          `https://social-sync.onrender.com/auth/register`,
+          registerRoute,
           {
             method: "POST",
             headers: {
@@ -102,17 +103,15 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch(
-      "https://social-sync.onrender.com/auth/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      }
-    );
+    const loggedInResponse = await fetch(loginRoute, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
     const loggedIn = await loggedInResponse.json();
 
     if (loggedIn) {
+      
       dispatch(
         setLogin({
           user: loggedIn.user,
