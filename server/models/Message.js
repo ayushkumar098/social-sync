@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import moment from "moment-timezone";
 
 const messageSchema = mongoose.Schema({
   conversationId: {
@@ -34,7 +35,7 @@ const messageSchema = mongoose.Schema({
       },
       created_at: {
         type: Date,
-        default: Date.now(),
+        default: () => moment().tz('Asia/Kolkata').format(),
       },
       text: {
         type: String,

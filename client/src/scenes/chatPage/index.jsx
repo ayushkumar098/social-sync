@@ -12,6 +12,7 @@ import { setUserChatList } from "state/index";
 const ChatPage = () => {
   const token = useSelector((state) => state.token);
   const { _id } = useSelector((state) => state.user);
+  const currentUser = useSelector((state) => state.currentUser);
   const dispatch = useDispatch();
   const theme = useTheme();
   const background = theme.palette.background.alt;
@@ -22,13 +23,12 @@ const ChatPage = () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
-    console.log(data);
     dispatch(setUserChatList({userChatList: data}));
   }
 
   useEffect(() => {
     getChatList();
-  }, []);
+  }, [currentUser]);
   
   return (
     <>

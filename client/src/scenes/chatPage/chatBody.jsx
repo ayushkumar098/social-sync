@@ -6,22 +6,13 @@ import FlexBetween from "components/FlexBetween";
 import Message from "./message";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import ChatInput from "./chatInput";
 
 const ChatBody = () => {
 
   const currentUser = useSelector((state) => state.currentUser);
   const theme = useTheme();
   const background = theme.palette.neutral.light;
-  const inputColor = theme.palette.neutral.light;
-
-  
-
-  const [message, setMessage] = useState("");
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    setMessage("");
-  };
-
 
   return (
     <Box display="flex" flexDirection="column">
@@ -33,7 +24,7 @@ const ChatBody = () => {
       >
         <Box display="flex" flexDirection="row" alignItems="center">
           <img
-          src={currentUser.sender.picturePath}
+            src={currentUser.sender.picturePath}
             style={{
               width: "4rem",
               height: "4rem",
@@ -56,32 +47,12 @@ const ChatBody = () => {
       </FlexBetween>
 
       <Box overflow="auto" height="calc(100vh - 14rem)">
-        <Message text="hgwevcf fdeyfde fge" />
+        {currentUser.messages.map((message) => (
+          <Message message={message} />
+        ))}
       </Box>
 
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        maxHeight="1rem"
-      >
-        <EmojiEmotionsIcon sx={{ fontSize: "2rem", margin: "0 0.7rem" }} />
-        <InputBase
-          placeholder="What's on your mind..."
-          sx={{
-            width: "100%",
-            backgroundColor: inputColor,
-            borderRadius: "10px",
-            padding: ".5rem 2rem",
-          }}
-        />
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <Send
-            onClick={handleSendMessage}
-            sx={{ fontSize: "2rem", margin: "0 0.7rem" }}
-          />
-        </Box>
-      </Box>
+      <ChatInput />
     </Box>
   );
 };

@@ -6,6 +6,7 @@ const ChatBarItem = ({ userChatItem }) => {
   const dispatch = useDispatch();
   const handleClick = () => {
     dispatch(setCurrentUser({ currentUser : userChatItem}));
+    
   };
   return (
     <>
