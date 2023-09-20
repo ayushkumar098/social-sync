@@ -8,17 +8,26 @@ import { host } from "utils/APIRoutes";
 import { Box, Divider, useTheme } from "@mui/material";
 import { useEffect } from "react";
 import { setUserChatList } from "state/index";
+// import { io } from "socket.io-client";
 
 const ChatPage = () => {
+  // const socket = useRef();
   const token = useSelector((state) => state.token);
-  const { _id } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
   const currentUser = useSelector((state) => state.currentUser);
   const dispatch = useDispatch();
   const theme = useTheme();
   const background = theme.palette.background.alt;
 
+  // useEffect(()=>{
+  //   if(user){
+  //     socket.current = io(host);
+  //     socket.current.emit("add-user", user._id)
+  //   }
+  // },[user]);
+
   const getChatList = async() =>{
-    const response = await fetch(`${host}/chat/getFriends/${_id}`, {
+    const response = await fetch(`${host}/chat/getFriends/${user._id}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });

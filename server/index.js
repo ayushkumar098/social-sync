@@ -7,17 +7,17 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+// import socket from "socket.io";
 
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
 import chatRouter from "./routes/chat.js";
 import { createPost } from "./controllers/posts.js";
-import {register} from "./controllers/auth.js";
+import { register } from "./controllers/auth.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
-import { posts} from "./data/index.js";
-
+import { posts } from "./data/index.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -33,29 +33,11 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
-// const socketIO = require("socket.io")(http, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//   },
-// });
-
-// socketIO.on("connection", (socket) => {
-//   console.log(`⚡: ${socket.id} user just connected!`);
-
-//   socket.on('messsage', (data) => {
-//     console.log(data);
-//     socketIO.emit("messageResponse", data);
-//   })
-
-//   socket.on("disconnect", () => {
-//     console.log("🔥: A user disconnected");
-//   });
-// });
 
 /* ROUTES WITH FILES */
-app.post("/auth/register" , register);
-app.get("/check", (req,res)=>{
-  res.status(200).json({check: "hello world"});
+app.post("/auth/register", register);
+app.get("/check", (req, res) => {
+  res.status(200).json({ check: "hello world" });
 });
 
 /* ROUTES */
@@ -72,9 +54,38 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    app.listen(PORT, () => console.log(`MongoDB server started on port: ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`MongoDB server started on port: ${PORT}`)
+    );
 
     // User.insertMany(users);
     // Post.insertMany(posts);
   })
   .catch((error) => console.log(`${error} did not connect`));
+
+// const io = socket(http, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//   },
+// });
+
+// global.onlineUsers = new Map();
+
+// io.on("connection", (socket) => {
+//   global.chatSocket = socket;
+
+//   socket.on("add-user", (userId) => {
+//     onlineUsers.set(userId, socket.id);
+//   });
+
+//   socket.on("send-msg", (data) => {
+//     const sendUserSocket = onlineUsers.get(data.to);
+//     if (sendUserSocket) {
+//       socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+//     }
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log("🔥: A user disconnected");
+//   });
+// });

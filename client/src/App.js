@@ -9,6 +9,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme.js";
 import ChatPage from "scenes/chatPage/index.jsx";
+import MessagingPage from "scenes/messagingPage/index.jsx";
 // import socketIO from "socket.io-client";
 
 
@@ -39,9 +40,13 @@ function App() {
               path="/posts/:userId/:postId"
               element={isAuth ? <ViewPostPage /> : <Navigate to="/" />}
             />
-            <Route
+            {/* <Route
               path="/message"
               element={isAuth ? <ChatPage /> : <Navigate to="/" />}
+            /> */}
+            <Route
+              path="/message"
+              element={ <MessagingPage />}
             />
           </Routes>
         </ThemeProvider>
