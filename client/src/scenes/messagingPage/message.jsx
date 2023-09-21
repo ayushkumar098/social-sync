@@ -1,12 +1,13 @@
 import { Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
-
+import "./styles.scss";
 
 const Message = ({message}) => {
   const ref = useRef();
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
+
   return (
     <div
       className={`message ${message.fromSelf ? "owner": "nonOwner"}`}

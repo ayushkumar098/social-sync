@@ -3,8 +3,9 @@ import {
   EditOutlined,
   LocationOnOutlined,
   WorkOutlineOutlined,
+  Message,
 } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme } from "@mui/material";
+import { Box, Typography, Divider, useTheme, IconButton } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
@@ -18,9 +19,14 @@ const UserWidget = ({ userId, picturePath }) => {
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
+  const {_id} = useSelector((state) => state.user);
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
+
+  const handleClick = () => {
+    navigate("/message");
+  }
 
   const getUser = async () => {
     const response = await fetch(`${host}/users/${userId}`, {
@@ -76,7 +82,14 @@ const UserWidget = ({ userId, picturePath }) => {
             <Typography color={medium}>{friends.length} friends</Typography>
           </Box>
         </FlexBetween>
-        <ManageAccountsOutlined />
+
+        {_id !== userId && (
+            <IconButton onClick={handleClick}>
+              <Message sx={{ fontSize: "25px" }} />
+            </IconButton>
+        )}
+
+        <ManageAccountsOutlined onClick={handleClick} />
       </FlexBetween>
       <Divider />
 

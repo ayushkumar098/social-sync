@@ -3,17 +3,26 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import FlexBetween from "components/FlexBetween";
 import ChatInput from "./chatInput";
 import Message from "./message";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { host } from "utils/APIRoutes";
 import { useEffect, useState } from "react";
+import { setNotification } from "state";
 
-const ChatContainer = ({ currentChat }) => {
+const ChatContainer = ({  socket }) => {
+  const currentChat = useSelector((state) => state.currentChat);
   const token = useSelector((state) => state.token);
   const { _id } = useSelector((state) => state.user);
+  const notification = useSelector((state) => state.notification);
   const theme = useTheme();
+  const dispatch = useDispatch();
   const background = theme.palette.neutral.light;
 
   const [messages, setMessages] = useState([]);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+
+  // useEffect(() =>{
+  //   console.log("---------"+currentChat._id);
+  // },[currentChat]);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -41,7 +50,7 @@ const ChatContainer = ({ currentChat }) => {
       to: currentChat._id,
       message: msg,
     };
-    const response = await fetch(`${host}/chat/addmsg`, {
+    await fetch(`${host}/chat/addmsg`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -49,9 +58,35 @@ const ChatContainer = ({ currentChat }) => {
       },
       body: JSON.stringify(messageBody),
     });
-    const data = await response.json();
-    console.log(data);
+    //const data = await response.json();
+    socket.current.emit("send-msg", {
+      to: currentChat._id,
+      from: _id,
+      message: msg,
+    });
+    const msgs = [...messages];
+    msgs.push({ fromSelf: true, message: msg });
+    setMessages(msgs);
   };
+
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("msg-recieve", (msg) => {
+        console.log(" from Id: "+msg.from);
+        console.log("currentChatId: "+currentChat._id);
+        
+        if(currentChat._id != msg.from){
+          console.log("notification");
+        }else{
+          setArrivalMessage({ fromSelf: false, message: msg.message });
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
 
   return (
     <Box display="flex" flexDirection="column">
@@ -86,8 +121,8 @@ const ChatContainer = ({ currentChat }) => {
       </FlexBetween>
 
       <Box overflow="auto" height="calc(100vh - 14rem)">
-        {messages.map((message,index) => (
-          <Message message={message} key={index}/>
+        {messages.map((message, index) => (
+          <Message message={message} key={index} />
         ))}
       </Box>
 

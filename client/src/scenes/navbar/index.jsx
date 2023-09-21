@@ -29,6 +29,8 @@ const NavbarPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const notification = useSelector((state) => state.notification);
+  console.log(notification);
   const isNonMobileScreen = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -83,8 +85,16 @@ const NavbarPage = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
+
+            <IconButton>
+              <Message
+                sx={{ fontSize: "25px" }}
+                onClick={() => navigate("/message")}
+              />
+            </IconButton>
+
+            {/* <Notifications sx={{ fontSize: "25px" }} /> */}
+
             <FormControl sx={{ fontSize: "25px" }}>
               <Select
                 value={fullName}
@@ -159,7 +169,10 @@ const NavbarPage = () => {
                   <LightMode sx={{ color: dark, fontSize: "25px" }} />
                 )}
               </IconButton>
-              <Message sx={{ fontSize: "25px" }} />
+              <Message
+                sx={{ fontSize: "25px" }}
+                onClick={() => navigate("/message")}
+              />
               <Notifications sx={{ fontSize: "25px" }} />
               <FormControl sx={{ fontSize: "25px" }}>
                 <Select

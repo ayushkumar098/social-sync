@@ -6,8 +6,8 @@ const INITIAL_STATE = {
   token: null,
   posts: [],
   viewPostUser: null,
-  userChatList: [],
-  currentUser: null,
+  currentChat: undefined,
+  notification: [],
 };
 
 export const authSlice = createSlice({
@@ -45,16 +45,15 @@ export const authSlice = createSlice({
       });
       state.posts = updatedPosts;
     },
-
     setViewPostUser: (state, action) => {
       state.viewPostUser = action.payload.viewPostUser;
     },
-    setCurrentUser: (state, action) => {
-      state.currentUser = action.payload.currentUser;
+    setCurrentChat: (state, action) => {
+      state.currentChat = action.payload.currentChat;
     },
-    setUserChatList: (state, action) => {
-      state.userChatList = action.payload.userChatList;
-    },
+    setNotification: (state, action) => {
+      state.notification = action.payload.notification;
+    }
   },
 });
 
@@ -66,8 +65,8 @@ export const {
   setPosts,
   setPost,
   setViewPostUser,
-  setCurrentUser,
-  setUserChatList,
+  setCurrentChat,
+  setNotification,
 } = authSlice.actions;
 
 export default authSlice.reducer;

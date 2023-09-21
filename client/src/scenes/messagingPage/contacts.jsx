@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { Typography, Box, Divider } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { setCurrentChat } from "state";
 
 const Contacts = ({ contacts, changeChat }) => {
-  const [currentSelected, setCurrentSelected] = useState(undefined);
+  // const [currentSelected, setCurrentSelected] = useState(undefined);
 
-  const changeCurrentChat = (contact, index) => {
-    setCurrentSelected(index);
-    changeChat(contact);
-  };
+  // const changeCurrentChat = (contact, index) => {
+  //   setCurrentSelected(index);
+  //   changeChat(contact);
+  // };
+  const dispatch = useDispatch();
+
+  const changeCurrentChat = (contact,index)=>{
+    dispatch(setCurrentChat({currentChat: contact}));
+  }
 
   return (
     <>

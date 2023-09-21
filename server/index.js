@@ -7,7 +7,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-// import socket from "socket.io";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
@@ -24,6 +25,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
+
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
@@ -32,7 +34,6 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
-
 
 /* ROUTES WITH FILES */
 app.post("/auth/register", register);
@@ -54,38 +55,43 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    app.listen(PORT, () =>
-      console.log(`MongoDB server started on port: ${PORT}`)
-    );
-
-    // User.insertMany(users);
-    // Post.insertMany(posts);
+    // app.listen(PORT, () =>
+    //   console.log(`MongoDB server started on port: ${PORT}`)
+    // );
+    console.log("DB Connetion Successfull");
   })
   .catch((error) => console.log(`${error} did not connect`));
 
-// const io = socket(http, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//   },
-// });
+const server = app.listen(process.env.PORT, () =>
+  console.log(`Server started on ${process.env.PORT}`)
+);
 
-// global.onlineUsers = new Map();
+// const server = createServer();
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+  },
+});
 
-// io.on("connection", (socket) => {
-//   global.chatSocket = socket;
+global.onlineUsers = new Map();
 
-//   socket.on("add-user", (userId) => {
-//     onlineUsers.set(userId, socket.id);
-//   });
+io.on("connection", (socket) => {
+  global.chatSocket = socket;
 
-//   socket.on("send-msg", (data) => {
-//     const sendUserSocket = onlineUsers.get(data.to);
-//     if (sendUserSocket) {
-//       socket.to(sendUserSocket).emit("msg-recieve", data.msg);
-//     }
-//   });
+  socket.on("add-user", (userId) => {
+    console.log("user-Added");
+    onlineUsers.set(userId, socket.id);
+  });
 
-//   socket.on("disconnect", () => {
-//     console.log("🔥: A user disconnected");
-//   });
-// });
+  socket.on("send-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-recieve", data);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("🔥: A user disconnected");
+  });
+});
