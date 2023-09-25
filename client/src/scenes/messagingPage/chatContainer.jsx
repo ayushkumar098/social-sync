@@ -7,15 +7,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { host } from "utils/APIRoutes";
 import { useEffect, useState } from "react";
 import { setNotification } from "state";
+import { useNavigate } from "react-router-dom";
 
-const ChatContainer = ({  socket }) => {
-  const currentChat = useSelector((state) => state.currentChat);
+const ChatContainer = ({ currentChat, socket }) => {
+  //const currentChat = useSelector((state) => state.currentChat);
   const token = useSelector((state) => state.token);
   const { _id } = useSelector((state) => state.user);
   const notification = useSelector((state) => state.notification);
   const theme = useTheme();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const background = theme.palette.neutral.light;
+  const primaryLight = theme.palette.primary.light;
 
   const [messages, setMessages] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -72,20 +75,26 @@ const ChatContainer = ({  socket }) => {
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
-        console.log(" from Id: "+msg.from);
-        console.log("currentChatId: "+currentChat._id);
-        
-        if(currentChat._id != msg.from){
-          console.log("notification");
-        }else{
-          setArrivalMessage({ fromSelf: false, message: msg.message });
-        }
+        setArrivalMessage({
+          fromSelf: false,
+          from: msg.from,
+          message: msg.message,
+        });
       });
     }
-  }, []);
+  }, [socket.current]);
 
   useEffect(() => {
-    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+    if (arrivalMessage) {
+      if (arrivalMessage.from === currentChat._id) {
+        setMessages((prev) => [...prev, arrivalMessage]);
+      } else {
+        console.log("notification");
+        dispatch(setNotification({notification: arrivalMessage}));
+        //dispatch(setNotification({notification: [arrivalMessage, ...notification]}));
+      }
+    }
+    //arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage]);
 
   return (
@@ -105,7 +114,17 @@ const ChatContainer = ({  socket }) => {
               borderRadius: "50%",
             }}
           />
-          <Typography variant="h3" pl="1rem">
+          <Typography
+            onClick={() => navigate(`/profile/${currentChat._id}`)}
+            sx={{
+              pl: "1rem",
+              "&:hover": {
+                cursor: "pointer",
+                color: primaryLight,
+              },
+            }}
+            variant="h3"
+          >
             {currentChat.firstName}
           </Typography>
         </Box>

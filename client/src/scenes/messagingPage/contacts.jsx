@@ -4,17 +4,17 @@ import { useDispatch } from "react-redux";
 import { setCurrentChat } from "state";
 
 const Contacts = ({ contacts, changeChat }) => {
-  // const [currentSelected, setCurrentSelected] = useState(undefined);
+  const [currentSelected, setCurrentSelected] = useState(undefined);
 
-  // const changeCurrentChat = (contact, index) => {
-  //   setCurrentSelected(index);
-  //   changeChat(contact);
-  // };
-  const dispatch = useDispatch();
+  const changeCurrentChat = (contact, index) => {
+    setCurrentSelected(index);
+    changeChat(contact);
+  };
+  // const dispatch = useDispatch();
 
-  const changeCurrentChat = (contact,index)=>{
-    dispatch(setCurrentChat({currentChat: contact}));
-  }
+  // const changeCurrentChat = (contact,index)=>{
+  //   dispatch(setCurrentChat({currentChat: contact}));
+  // }
 
   return (
     <>

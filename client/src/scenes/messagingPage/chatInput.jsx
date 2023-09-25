@@ -39,6 +39,7 @@ const ChatInput = ({ handleSendMsg }) => {
       flexDirection="row"
       alignItems="center"
       maxHeight="1rem"
+      bottom="100%"
     >
       <IconButton onClick={() => setIsEmojiVisible(!isEmojiVisible)}>
         <EmojiEmotionsIcon sx={{ fontSize: "2rem", margin: "0 0.7rem" }} />

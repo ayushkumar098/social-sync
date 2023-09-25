@@ -6,13 +6,13 @@ import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 
-const HomePage = () => {
+const HomePage = ({socket}) => {
   const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
 
   return (
     <Box>
-      <NavbarPage />
+      <NavbarPage socket={socket} />
       <Box
         width="100%"
         padding="2rem 6%"
@@ -31,9 +31,11 @@ const HomePage = () => {
           <PostsWidget userId={_id} />
         </Box>
 
-        {isNonMobileScreen && <Box flexBasis="26%">
-          <FriendListWidget userId={_id} />
-        </Box>}
+        {isNonMobileScreen && (
+          <Box flexBasis="26%">
+            <FriendListWidget userId={_id} />
+          </Box>
+        )}
       </Box>
     </Box>
   );

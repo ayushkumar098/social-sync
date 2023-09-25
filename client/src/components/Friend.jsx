@@ -6,7 +6,7 @@ import {
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends } from "state/index";
+import { setFriends, setNotFriends } from "state/index";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import { host } from "utils/APIRoutes";
@@ -36,6 +36,14 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     });
     const data = await response.json();
     dispatch(setFriends({ friends: data }));
+
+    const notResponse = await fetch(`${host}/users/${user._id}/notFriends`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const notData = await notResponse.json();
+    console.log(notData);
+    dispatch(setNotFriends({ notFriends: notData }));
   };
 
   return (

@@ -29,6 +29,23 @@ export const getUserFriends = async (req, res) => {
   }
 };
 
+export const getUserNotFriends = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    const userFriendIds = user.friends.map((friend) => friend.toString());
+    const notFriends = await User.find({ _id: { $nin: [id, ...userFriendIds] } });
+    const formattedNotFriends = notFriends.map(
+      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return { _id, firstName, lastName, occupation, location, picturePath };
+      }
+    );
+    res.status(200).json(formattedNotFriends);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 // UPDATE
 export const addRemoveFriend = async (req, res) => {
   try {

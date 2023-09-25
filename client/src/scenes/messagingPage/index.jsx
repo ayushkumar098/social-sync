@@ -7,23 +7,22 @@ import Welcome from "components/Welcome";
 import ChatContainer from "./chatContainer";
 import NavbarPage from "scenes/navbar";
 import { useTheme } from "@emotion/react";
-import { io } from "socket.io-client";
+//import { io } from "socket.io-client";
 
-const MessagingPage = () => {
-  const socket = useRef();
+const MessagingPage = ({socket}) => {
+  // const socket = useRef();
   const theme = useTheme();
   const background = theme.palette.background.alt;
   const user = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const currentChat = useSelector((state) => state.currentChat);
-  console.log(currentChat);
+  //const currentChat = useSelector((state) => state.currentChat);
   const [contacts, setContacts] = useState([]);
-  //const [currentChat, setCurrentChat] = useState(undefined);
+  const [currentChat, setCurrentChat] = useState(undefined);
 
-  useEffect(()=>{
-    socket.current = io(host);
-    socket.current.emit("add-user",user._id)
-  },[])
+  // useEffect(()=>{
+  //   socket.current = io(host);
+  //   socket.current.emit("add-user",user._id)
+  // },[])
   
   useEffect(() => {
     const fetchData = async () => {
@@ -39,13 +38,13 @@ const MessagingPage = () => {
     fetchData();
   }, []);
 
-  // const handleChatChange = (chat) => {
-  //   setCurrentChat(chat);
-  // };
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
+  };
 
   return (
     <>
-      <NavbarPage />
+      <NavbarPage socket={socket}/>
       <Box
         display="flex"
         backgroundColor={background}
@@ -53,16 +52,16 @@ const MessagingPage = () => {
         height="calc( 100vh - 7rem )"
       >
         <Box width="22%">
-          {/* <Contacts contacts={contacts} changeChat={handleChatChange} /> */}
-          <Contacts contacts={contacts}  />
+          <Contacts contacts={contacts} changeChat={handleChatChange} />
+          {/* <Contacts contacts={contacts}  /> */}
         </Box>
         <Divider orientation="vertical" />
         <Box width="78%">
-          {currentChat === null ? (
+          {currentChat === undefined ? (
             <Welcome />
           ) : (
-            //<ChatContainer currentChat={currentChat} socket={socket} />
-            <ChatContainer socket={socket} />
+            <ChatContainer currentChat={currentChat} socket={socket} />
+            //<ChatContainer socket={socket} />
           )}
         </Box>
       </Box>

@@ -9,7 +9,7 @@ import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
 import { host } from "utils/APIRoutes";
 
-const ProfilePage = () => {
+const ProfilePage = ({ socket }) => {
   const [user, setUser] = useState(null);
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
@@ -32,7 +32,7 @@ const ProfilePage = () => {
 
   return (
     <Box>
-      <Navbar />
+      <Navbar socket={socket} />
       <Box
         width="100%"
         padding="2rem 6%"

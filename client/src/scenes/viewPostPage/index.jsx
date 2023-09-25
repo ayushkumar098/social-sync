@@ -21,7 +21,7 @@ import { setViewPostUser } from "state/index";
 import Navbar from "scenes/navbar";
 import { host } from "utils/APIRoutes";
 
-const ViewPostPage = () => {
+const ViewPostPage = ({ socket }) => {
   const postData = useSelector((state) => state.viewPostUser);
   //console.log(postData);
 
@@ -91,7 +91,7 @@ const ViewPostPage = () => {
 
   return (
     <Box>
-      <Navbar />
+      <Navbar socket={socket} />
       <WidgetWrapper
         m="1rem 0"
         width={isNonMobileScreens ? "50%" : "100%"}

@@ -33,6 +33,13 @@ export const authSlice = createSlice({
         console.error("user friends non-existent.");
       }
     },
+    setNotFriends: (state, action) => {
+      if (state.user) {
+        state.user.notFriends = action.payload.notFriends;
+      } else {
+        console.error("user friends non-existent.");
+      }
+    },
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
     },
@@ -52,8 +59,16 @@ export const authSlice = createSlice({
       state.currentChat = action.payload.currentChat;
     },
     setNotification: (state, action) => {
-      state.notification = action.payload.notification;
-    }
+      if (! state.notification.includes(action.payload.notification)) {
+        state.notification = [
+          action.payload.notification,
+          ...state.notification,
+        ];
+      }
+    },
+    setClearNotification: (state, action) => {
+      state.notification = [];
+    },
   },
 });
 
@@ -62,11 +77,13 @@ export const {
   setLogin,
   setLogout,
   setFriends,
+  setNotFriends,
   setPosts,
   setPost,
   setViewPostUser,
   setCurrentChat,
   setNotification,
+  setClearNotification,
 } = authSlice.actions;
 
 export default authSlice.reducer;

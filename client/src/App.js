@@ -3,18 +3,29 @@ import HomePage from "scenes/homePage";
 import LoginPage from "scenes/loginPage";
 import ProfilePage from "scenes/profilePage";
 import ViewPostPage from "scenes/viewPostPage/index.jsx";
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme.js";
 import MessagingPage from "scenes/messagingPage/index.jsx";
+import { io } from "socket.io-client";
+import { host } from "utils/APIRoutes";
 
 function App() {
   const mode = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const isAuth = Boolean(useSelector((state) => state.token));
-  console.log("Auth: "+isAuth);
+
+  const user = useSelector((state) => state.user);
+
+  const socket = useRef();
+  useEffect(() => {
+    if (user) {
+      socket.current = io(host);
+      socket.current.emit("add-user", user._id);
+    }
+  }, []);
 
   return (
     <div className="app">
@@ -25,19 +36,27 @@ function App() {
             <Route path="/" element={<LoginPage />} />
             <Route
               path="/home"
-              element={isAuth ? <HomePage /> : <Navigate to="/" />}
+              element={
+                isAuth ? <HomePage socket={socket} /> : <Navigate to="/" />
+              }
             />
             <Route
               path="/profile/:userId"
-              element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
+              element={
+                isAuth ? <ProfilePage socket={socket} /> : <Navigate to="/" />
+              }
             />
             <Route
               path="/posts/:userId/:postId"
-              element={isAuth ? <ViewPostPage /> : <Navigate to="/" />}
+              element={
+                isAuth ? <ViewPostPage socket={socket} /> : <Navigate to="/" />
+              }
             />
             <Route
               path="/message"
-              element={isAuth ? <MessagingPage /> : <Navigate to="/" />}
+              element={
+                isAuth ? <MessagingPage socket={socket} /> : <Navigate to="/" />
+              }
             />
           </Routes>
         </ThemeProvider>

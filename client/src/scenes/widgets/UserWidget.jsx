@@ -9,15 +9,17 @@ import { Box, Typography, Divider, useTheme, IconButton } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { host } from "utils/APIRoutes";
+import { setCurrentChat } from "state";
 
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
   const { palette } = useTheme();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const {_id} = useSelector((state) => state.user);
   const dark = palette.neutral.dark;
@@ -25,7 +27,9 @@ const UserWidget = ({ userId, picturePath }) => {
   const main = palette.neutral.main;
 
   const handleClick = () => {
+    dispatch(setCurrentChat({currentChat: user}));
     navigate("/message");
+    navigate(0);
   }
 
   const getUser = async () => {
@@ -50,8 +54,6 @@ const UserWidget = ({ userId, picturePath }) => {
     lastName,
     location,
     occupation,
-    viewedProfile,
-    impressions,
     friends,
   } = user;
 
@@ -89,7 +91,7 @@ const UserWidget = ({ userId, picturePath }) => {
             </IconButton>
         )}
 
-        <ManageAccountsOutlined onClick={handleClick} />
+        {/* <ManageAccountsOutlined onClick={handleClick} /> */}
       </FlexBetween>
       <Divider />
 
@@ -108,24 +110,6 @@ const UserWidget = ({ userId, picturePath }) => {
       <Divider />
 
       {/* THIRD ROW */}
-      <Box p="1rem 0">
-        <FlexBetween mb="0.5rem">
-          <Typography color={medium}>Who's viewed your profile</Typography>
-          <Typography color={main} fontWeight="500">
-            {viewedProfile}
-          </Typography>
-        </FlexBetween>
-        <FlexBetween>
-          <Typography color={medium}>Impressions of your post</Typography>
-          <Typography color={main} fontWeight="500">
-            {impressions}
-          </Typography>
-        </FlexBetween>
-      </Box>
-
-      <Divider />
-
-      {/* FOURTH ROW */}
       <Box p="1rem 0">
         <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
           Social Profiles

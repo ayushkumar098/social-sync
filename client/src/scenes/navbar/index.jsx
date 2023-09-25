@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
@@ -9,6 +9,8 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Divider,
+  Badge,
 } from "@mui/material";
 import {
   Search,
@@ -20,17 +22,24 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state/index";
+import {
+  setMode,
+  setLogout,
+  setNotification,
+  setClearNotification,
+} from "state/index";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import { host } from "utils/APIRoutes";
+import UserImage from "components/UserImage";
 
-const NavbarPage = () => {
+const NavbarPage = ({ socket }) => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const notification = useSelector((state) => state.notification);
-  console.log(notification);
   const isNonMobileScreen = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -41,6 +50,69 @@ const NavbarPage = () => {
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
+
+  const [isFocused, setIsFocused] = useState(false);
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
+  const [toggleNotification, setToggleNotification] = useState(false);
+
+  const handleNotificationToggle = () => {
+    setToggleNotification(!toggleNotification);
+  };
+
+  const [users, setUsers] = useState([]);
+  const [searchField, setSearchField] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("msg-recieve", (msg) => {
+        if (!notification.includes(msg)) {
+          dispatch(setNotification({ notification: msg }));
+        }
+      });
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        const response = await fetch(`${host}/chat/getusers/${user._id}`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        setUsers(data);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (searchField === "") {
+      setFilteredUsers([]);
+    } else {
+      const newFilteredUsers = users.filter((user) => {
+        return user.firstName.toLocaleLowerCase().includes(searchField);
+      });
+      setFilteredUsers(newFilteredUsers);
+    }
+  }, [searchField]);
+
+  const onSearchChangeHandler = (event) => {
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    setSearchField(searchFieldString);
+  };
+
+  const handleOnClickNotification = () => {
+    navigate("/message");
+    navigate(0);
+  };
 
   return (
     <>
@@ -60,24 +132,87 @@ const NavbarPage = () => {
           >
             SocialSync
           </Typography>
-          {isNonMobileScreen && (
-            <FlexBetween
-              backgroundColor={neutralLight}
-              borderRadius="9px"
-              gap="3rem"
-              padding="0.1rem 1.5rem"
-            >
-              <InputBase placeholder="Search..." />
-              <IconButton>
-                <Search />
-              </IconButton>
-            </FlexBetween>
-          )}
         </FlexBetween>
 
         {/* DESKTOP NAV */}
         {isNonMobileScreen ? (
           <FlexBetween gap="2rem">
+            {/* SEARCH FUNCTIONALITY */}
+            <FormControl sx={{ width: "20rem" }}>
+              <FlexBetween
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                sx={{
+                  backgroundColor: { background },
+                  borderRadius: "9px",
+                  gap: "3rem",
+                  p: "0.1rem 1.5rem",
+                  position: "relative",
+                }}
+              >
+                <InputBase
+                  placeholder="Search..."
+                  onChange={onSearchChangeHandler}
+                />
+                <IconButton>
+                  <Search />
+                </IconButton>
+              </FlexBetween>
+
+              <Box
+                sx={{
+                  width: "20rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  position: "absolute",
+                  top: "100%",
+                  left: "0",
+                  zIndex: "2",
+                  bgcolor: { background },
+                  borderRadius: "2px 2px 10px 10px",
+                }}
+              >
+                {filteredUsers.length > 0 &&
+                  filteredUsers.map((item) => {
+                    return (
+                      <>
+                        <Box
+                          onClick={() => {
+                            navigate(`/profile/${item._id}`);
+                            navigate(0);
+                          }}
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            m: "0.5rem 1rem",
+                            "&:hover": {
+                              cursor: "pointer",
+                            },
+                          }}
+                        >
+                          <UserImage image={item.picturePath} size="55px" />
+                          <Typography
+                            variant="h5"
+                            fontWeight="300"
+                            sx={{
+                              pl: "0.5rem",
+                              "&:hover": {
+                                color: primaryLight,
+                              },
+                            }}
+                          >
+                            {item.firstName}
+                          </Typography>
+                        </Box>
+                        <Divider />
+                      </>
+                    );
+                  })}
+              </Box>
+            </FormControl>
+
+            {/* COLOR THEME FUNCTIONALITY */}
             <IconButton onClick={() => dispatch(setMode())}>
               {theme.palette.mode === "dark" ? (
                 <DarkMode sx={{ fontSize: "25px" }} />
@@ -86,6 +221,7 @@ const NavbarPage = () => {
               )}
             </IconButton>
 
+            {/* MESSAGE FUNCTIONALITY */}
             <IconButton>
               <Message
                 sx={{ fontSize: "25px" }}
@@ -93,8 +229,80 @@ const NavbarPage = () => {
               />
             </IconButton>
 
-            {/* <Notifications sx={{ fontSize: "25px" }} /> */}
+            {/* NOTIFICATION FUNCTIONALITY */}
+            <Box
+              sx={{
+                position: "relative",
+              }}
+            >
+              {" "}
+              {notification.length > 0 ? (
+                <Badge
+                  badgeContent=" "
+                  color="secondary"
+                  sx={{ width: "1.6rem" }}
+                >
+                  <Notifications
+                    onClick={handleNotificationToggle}
+                    sx={{ fontSize: "30px" }}
+                  />
+                </Badge>
+              ) : (
+                <Badge color="secondary">
+                  <Notifications
+                    onClick={handleNotificationToggle}
+                    sx={{ fontSize: "25px" }}
+                  />
+                </Badge>
+              )}
+              {toggleNotification && (
+                <Box
+                  sx={{
+                    width: "fit-content",
+                    whiteSpace: "nowrap",
+                    position: "absolute",
+                    top: "100%",
+                    left: "0",
+                    marginTop: ".5rem",
+                    zIndex: "2",
+                    bgcolor: { background },
+                  }}
+                >
+                  {notification.length > 0 ? (
+                    <Box
+                      onClick={handleOnClickNotification}
+                      sx={{
+                        p: "0.2rem",
+                        border: "solid black 1px",
+                        "&:hover": {
+                          cursor: "pointer",
+                        },
+                      }}
+                    >
+                      <Typography variant="h5" fontWeight="300">
+                        You have New Messages
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Box
+                      sx={{
+                        p: "0.2rem",
+                        border: "solid black 1px",
+                        "&:hover": {
+                          cursor: "pointer",
+                        },
+                      }}
+                    >
+                      <Typography variant="h5" fontWeight="300">
+                        No New Notifications
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              )}
+            </Box>
 
+            {/* LOGOUT FUNCTIONALITY */}
             <FormControl sx={{ fontSize: "25px" }}>
               <Select
                 value={fullName}
@@ -173,7 +381,9 @@ const NavbarPage = () => {
                 sx={{ fontSize: "25px" }}
                 onClick={() => navigate("/message")}
               />
+
               <Notifications sx={{ fontSize: "25px" }} />
+
               <FormControl sx={{ fontSize: "25px" }}>
                 <Select
                   value={fullName}
