@@ -71,9 +71,16 @@ export const getMessages = async (req, res, next) => {
     }).sort({ updatedAt: 1 });
 
     const projectedMessages = messages.map((msg) => {
+      const createdAt = msg.createdAt;
+      const formattedTime = `${createdAt.getHours()}:${String(
+        createdAt.getMinutes()
+      ).padStart(2, "0")}`;
+
+
       return {
         fromSelf: msg.sender.toString() === from,
         message: msg.message.text,
+        time: formattedTime,
       };
     });
     res.json(projectedMessages);

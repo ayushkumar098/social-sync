@@ -67,7 +67,7 @@ export const authSlice = createSlice({
       }
     },
     setClearNotification: (state, action) => {
-      state.notification = [];
+      state.notification = action.payload.notification;
     },
   },
 });

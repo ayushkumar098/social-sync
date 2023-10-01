@@ -91,7 +91,7 @@ const ViewPostPage = ({ socket }) => {
 
   return (
     <Box>
-      <Navbar socket={socket} />
+      <Navbar socket={socket} messagePage={false} />
       <WidgetWrapper
         m="1rem 0"
         width={isNonMobileScreens ? "50%" : "100%"}

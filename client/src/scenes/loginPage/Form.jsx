@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -28,7 +29,7 @@ const registerSchema = yup.object().shape({
   password: yup.string().required("required"),
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
-  picture: yup.string().required("required"),
+  picture: yup.string(),
 });
 
 const loginSchema = yup.object().shape({
@@ -53,6 +54,7 @@ const initialValuesLogin = {
 
 const Form = () => {
   const [pageType, setPageType] = useState("login");
+  const [isLoding, setIsLoding] = useState(false);
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -61,6 +63,12 @@ const Form = () => {
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
+    if (!values.picture) {
+      console.log("image??");
+      alert("Please select an image!");
+      return;
+    }
+    setIsLoding(true);
     const storageRef = ref(storage, uuid());
     const uploadTask = uploadBytesResumable(storageRef, values.picture);
 
@@ -80,29 +88,28 @@ const Form = () => {
           location: values.location,
           occupation: values.occupation,
         };
-        const savedUserResponse = await fetch(
-          registerRoute,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
+        const savedUserResponse = await fetch(registerRoute, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
         const savedUser = await savedUserResponse.json();
 
         if (savedUser) {
+          onSubmitProps.resetForm();
+          setIsLoding(false);
           setPageType("login");
         }
       })
       .catch((error) => {
         console.error(error);
       });
-    onSubmitProps.resetForm();
   };
 
   const login = async (values, onSubmitProps) => {
+    setIsLoding(true);
     const loggedInResponse = await fetch(loginRoute, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -111,7 +118,6 @@ const Form = () => {
     const loggedIn = await loggedInResponse.json();
 
     if (loggedIn) {
-      
       dispatch(
         setLogin({
           user: loggedIn.user,
@@ -121,6 +127,7 @@ const Form = () => {
       navigate("/home");
     }
     onSubmitProps.resetForm();
+    setIsLoding(false);
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -130,6 +137,7 @@ const Form = () => {
 
   return (
     <Formik
+      key={pageType}
       onSubmit={handleFormSubmit}
       initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
       validationSchema={isLogin ? loginSchema : registerSchema}
@@ -260,6 +268,17 @@ const Form = () => {
               sx={{ gridColumn: "span 4" }}
             />
           </Box>
+          {isLoding && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "1rem 0 0 0",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
 
           {/* BUTTON */}
           <Box>

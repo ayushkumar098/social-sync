@@ -4,16 +4,15 @@ import FlexBetween from "components/FlexBetween";
 import ChatInput from "./chatInput";
 import Message from "./message";
 import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from 'uuid';
 import { host } from "utils/APIRoutes";
 import { useEffect, useState } from "react";
 import { setNotification } from "state";
 import { useNavigate } from "react-router-dom";
 
 const ChatContainer = ({ currentChat, socket }) => {
-  //const currentChat = useSelector((state) => state.currentChat);
   const token = useSelector((state) => state.token);
   const { _id } = useSelector((state) => state.user);
-  const notification = useSelector((state) => state.notification);
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,9 +22,6 @@ const ChatContainer = ({ currentChat, socket }) => {
   const [messages, setMessages] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
-  // useEffect(() =>{
-  //   console.log("---------"+currentChat._id);
-  // },[currentChat]);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -63,6 +59,7 @@ const ChatContainer = ({ currentChat, socket }) => {
     });
     //const data = await response.json();
     socket.current.emit("send-msg", {
+      msgId: uuidv4(),
       to: currentChat._id,
       from: _id,
       message: msg,
@@ -91,10 +88,8 @@ const ChatContainer = ({ currentChat, socket }) => {
       } else {
         console.log("notification");
         dispatch(setNotification({notification: arrivalMessage}));
-        //dispatch(setNotification({notification: [arrivalMessage, ...notification]}));
       }
     }
-    //arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage]);
 
   return (
@@ -139,7 +134,7 @@ const ChatContainer = ({ currentChat, socket }) => {
         />
       </FlexBetween>
 
-      <Box overflow="auto" height="calc(100vh - 14rem)">
+      <Box overflow="auto" height="calc(100vh - 14rem)" >
         {messages.map((message, index) => (
           <Message message={message} key={index} />
         ))}

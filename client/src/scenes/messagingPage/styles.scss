@@ -4,7 +4,8 @@
     margin: 20px;
 
     .messageContent {
-        background-color: aqua;
+        //background-color: var(--mui-palette-primary-light);
+        background-color: #006B7D;
         max-width: 80%;
         padding: 10px 20px;
         border-radius: 0px 10px 10px 10px;
@@ -22,7 +23,7 @@
 
     .messageContent {
         border-radius: 10px 0px 10px 10px;
-        background-color: aquamarine;
+        background-color: #00A0BC;
         width: fit-content;
     }
 }

@@ -32,7 +32,7 @@ const ProfilePage = ({ socket }) => {
 
   return (
     <Box>
-      <Navbar socket={socket} />
+      <Navbar socket={socket} messagePage={false} />
       <Box
         width="100%"
         padding="2rem 6%"

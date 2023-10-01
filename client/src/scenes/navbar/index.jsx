@@ -33,7 +33,7 @@ import FlexBetween from "components/FlexBetween";
 import { host } from "utils/APIRoutes";
 import UserImage from "components/UserImage";
 
-const NavbarPage = ({ socket }) => {
+const NavbarPage = ({ socket, messagePage }) => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -72,12 +72,15 @@ const NavbarPage = ({ socket }) => {
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
-        if (!notification.includes(msg)) {
+        if (messagePage != true) {
+          console.log(msg.msgId);
           dispatch(setNotification({ notification: msg }));
+        } else {
+          console.log(messagePage);
         }
       });
     }
-  }, [socket.current]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -235,7 +238,6 @@ const NavbarPage = ({ socket }) => {
                 position: "relative",
               }}
             >
-              {" "}
               {notification.length > 0 ? (
                 <Badge
                   badgeContent=" "
@@ -382,7 +384,7 @@ const NavbarPage = ({ socket }) => {
                 onClick={() => navigate("/message")}
               />
 
-              <Notifications sx={{ fontSize: "25px" }} />
+              {/* <Notifications sx={{ fontSize: "25px" }} /> */}
 
               <FormControl sx={{ fontSize: "25px" }}>
                 <Select

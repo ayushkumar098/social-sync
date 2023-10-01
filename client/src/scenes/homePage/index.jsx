@@ -12,7 +12,7 @@ const HomePage = ({socket}) => {
 
   return (
     <Box>
-      <NavbarPage socket={socket} />
+      <NavbarPage socket={socket} messagePage={false} />
       <Box
         width="100%"
         padding="2rem 6%"
