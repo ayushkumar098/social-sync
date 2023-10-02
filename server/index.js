@@ -71,8 +71,7 @@ const server = http.createServer(app);
 // const server = createServer();
 const io = new Server(server, {
   cors: {
-    origin: "https://stalwart-moonbeam-2f40cd.netlify.app",
-    credentials: true,
+    origin: "*",
   },
 });
 
