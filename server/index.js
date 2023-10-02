@@ -1,4 +1,5 @@
 import express from "express";
+import http from "http";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -62,9 +63,10 @@ mongoose
   })
   .catch((error) => console.log(`${error} did not connect`));
 
-const server = app.listen(process.env.PORT, () =>
-  console.log(`Server started on ${process.env.PORT}`)
-);
+const server = http.createServer(app);
+// const server = app.listen(process.env.PORT, () =>
+//   console.log(`Server started on ${process.env.PORT}`)
+// );
 
 // const server = createServer();
 const io = new Server(server, {
@@ -95,3 +97,7 @@ io.on("connection", (socket) => {
     console.log("🔥: A user disconnected");
   });
 });
+
+server.listen(process.env.PORT, () =>
+  console.log(`Server started on ${process.env.PORT}`)
+);
