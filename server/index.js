@@ -8,7 +8,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-import { createServer } from "http";
+//import { createServer } from "http";
 import { Server } from "socket.io";
 
 import authRoutes from "./routes/auth.js";
@@ -56,9 +56,6 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    // app.listen(PORT, () =>
-    //   console.log(`MongoDB server started on port: ${PORT}`)
-    // );
     console.log("DB Connetion Successfull");
   })
   .catch((error) => console.log(`${error} did not connect`));
@@ -68,11 +65,9 @@ const server = http.createServer(app);
 //   console.log(`Server started on ${process.env.PORT}`)
 // );
 
-// const server = createServer();
 const io = new Server(server, {
   cors: {
-    origin: "https://stalwart-moonbeam-2f40cd.netlify.app",
-    credentials: true,
+    origin: "*",
   },
 });
 

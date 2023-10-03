@@ -239,11 +239,7 @@ const NavbarPage = ({ socket, messagePage }) => {
               }}
             >
               {notification.length > 0 ? (
-                <Badge
-                  badgeContent=" "
-                  color="secondary"
-                  sx={{ width: "1.6rem" }}
-                >
+                <Badge badgeContent=" " color="error" sx={{ width: "1.6rem" }}>
                   <Notifications
                     onClick={handleNotificationToggle}
                     sx={{ fontSize: "30px" }}

@@ -108,3 +108,15 @@ export const addComment = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+// DELETE POST
+export const deletePost = async (req, res) => {
+  try {
+    const {postId} = req.params;
+    await Post.findByIdAndDelete(postId);
+    const updatedPost = await Post.find().sort({ createdAt: -1 });
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};

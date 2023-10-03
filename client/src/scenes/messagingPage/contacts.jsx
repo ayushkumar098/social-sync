@@ -74,7 +74,6 @@ const Contacts = ({ contacts, changeChat }) => {
                         borderRadius: "50%",
                         textAlign: "center",
                         lineHeight: "30px",
-                        fontWeight: "bold",
                       }}
                     >
                       {uniqueNotificationsArray.length}

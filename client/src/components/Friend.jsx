@@ -1,17 +1,16 @@
-import {
-  PersonAddOutlined,
-  PersonRemoveOutlined,
-  Message,
-} from "@mui/icons-material";
+import { PersonAddOutlined, PersonRemoveOutlined, PlayLesson } from "@mui/icons-material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends, setNotFriends } from "state/index";
+import { setFriends, setNotFriends, setPosts } from "state/index";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import { host } from "utils/APIRoutes";
+import { useState } from "react";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
@@ -23,8 +22,17 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
+  const hoverBackground = palette.background.default;
+  const background = palette.neutral.light;
 
   const isFriend = friends.find((friend) => friend._id === friendId);
+  const isMyPost = friendId === user._id ? true : false;
+
+   const [toggleDelete, setToggleDelete] = useState(false);
+
+   const handleDeleteToggle = () => {
+     setToggleDelete(!toggleDelete);
+   };
 
   const patchFriend = async () => {
     const response = await fetch(`${host}/users/${user._id}/${friendId}`, {
@@ -44,6 +52,19 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     const notData = await notResponse.json();
     console.log(notData);
     dispatch(setNotFriends({ notFriends: notData }));
+  };
+
+  const deletePost = async () => {
+    const response = await fetch(`${host}/posts/${postId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+    dispatch(setPosts({ posts: data }));
   };
 
   return (
@@ -73,18 +94,67 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
             {subtitle}
           </Typography>
         </Box>
+        {!isMyPost && (
+          <IconButton
+            onClick={() => patchFriend()}
+            sx={{
+              backgroundColor: primaryLight,
+              p: "0.6rem",
+            }}
+          >
+            {isFriend ? (
+              <PersonRemoveOutlined sx={{ color: primaryDark }} />
+            ) : (
+              <PersonAddOutlined sx={{ color: primaryDark }} />
+            )}
+          </IconButton>
+        )}
       </FlexBetween>
 
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        )}
-      </IconButton>
+      {postId && (
+        <Box
+          sx={{
+            position: "relative",
+          }}
+        >
+          <IconButton>
+            <MoreVertIcon
+              onClick={handleDeleteToggle}
+              sx={{ fontSize: "25px" }}
+            />
+          </IconButton>
+          {toggleDelete && (
+            <Box
+              sx={{
+                width: "fit-content",
+                whiteSpace: "nowrap",
+                position: "absolute",
+                top: "100%",
+                right: "10%",
+                zIndex: "12",
+              }}
+            >
+              <Box
+                onClick={() => deletePost()}
+                sx={{
+                  padding: "0.5rem 1rem",
+                  //border: "solid black 1px",
+                  borderRadius: "4px",
+                  backgroundColor: background,
+                  "&:hover": {
+                    cursor: "pointer",
+                    backgroundColor: hoverBackground,
+                  },
+                }}
+              >
+                <Typography variant="h5" fontWeight="300">
+                  <DeleteIcon /> Delete Post
+                </Typography>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      )}
     </FlexBetween>
   );
 };
