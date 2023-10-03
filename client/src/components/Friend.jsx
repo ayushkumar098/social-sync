@@ -111,7 +111,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
         )}
       </FlexBetween>
 
-      {postId && (
+      {isMyPost && postId && (
         <Box
           sx={{
             position: "relative",
