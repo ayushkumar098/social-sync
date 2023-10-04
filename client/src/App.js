@@ -11,6 +11,7 @@ import { themeSettings } from "./theme.js";
 import MessagingPage from "scenes/messagingPage/index.jsx";
 import { io } from "socket.io-client";
 import { host } from "utils/APIRoutes";
+import GeneralPage from "scenes/generalPage/index.jsx";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -33,11 +34,11 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route
-              path="/home"
+              path="/"
               element={
-                isAuth ? <HomePage socket={socket} /> : <Navigate to="/" />
+                isAuth ? <HomePage socket={socket} /> : <GeneralPage/>
               }
             />
             <Route

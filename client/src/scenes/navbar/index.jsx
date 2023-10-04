@@ -125,7 +125,7 @@ const NavbarPage = ({ socket, messagePage }) => {
             fontWeight="bold"
             fontSize="clamp(1rem, 2rem, 2.25rem)"
             color="primary"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
             sx={{
               "&:hover": {
                 color: primaryLight,
@@ -322,7 +322,12 @@ const NavbarPage = ({ socket, messagePage }) => {
                 <MenuItem value={fullName}>
                   <Typography>{fullName}</Typography>
                 </MenuItem>
-                <MenuItem onClick={() => dispatch(setLogout())}>
+                <MenuItem
+                  onClick={() => {
+                    dispatch(setLogout());
+                    navigate("/login");
+                  }}
+                >
                   Log Out
                 </MenuItem>
               </Select>
@@ -403,7 +408,10 @@ const NavbarPage = ({ socket, messagePage }) => {
                   <MenuItem value={fullName}>
                     <Typography>{fullName}</Typography>
                   </MenuItem>
-                  <MenuItem onClick={() => dispatch(setLogout())}>
+                  <MenuItem onClick={() => {
+                    dispatch(setLogout());
+                    navigate("/login");
+                  }}>
                     Log Out
                   </MenuItem>
                 </Select>
